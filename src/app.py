@@ -56,9 +56,7 @@ async def health():
 @app.post('/add/', status_code=200)
 def add(request: TransactionsListRequest, response: Response):
 	'''Add a set of user transactions into the database'''
-	print(request)
 	for transaction in request:
-		print(transaction)
 		db.add_transaction({"user": transaction.user, "item": transaction.item, "rating":transaction.rating})
 	return {"status":"success"}
 
@@ -76,11 +74,16 @@ def train(request: TrainRequest, response: Response):
 
 #Admin end-points
 @app.get('/contents/', status_code=200)
-def contents(response: Response):
+def contents():
 	'''Add a set of user transactions into the database'''
 	items = db.get_items()
 	users = db.get_users()
 	return {"users":users, "items":items}
+
+@app.get('/purge/', status_code=200)
+def purge():
+	'''Remove DB contents'''
+	db._purgeDB()
 
 
     

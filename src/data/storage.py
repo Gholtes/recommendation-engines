@@ -60,5 +60,9 @@ class reccomendationDB:
 		os.remove('src/data/data/transactions.json')
 		os.remove('src/data/data/users.json')
 		os.remove('src/data/data/items.json')
+		#rebuild
+		self.transactions = TinyDB('src/data/data/transactions.json')
+		self.users = TinyDB('src/data/data/users.json')
+		self.items = TinyDB('src/data/data/items.json')
 
 	
