@@ -130,4 +130,4 @@ dmypy.json
 .pyre/
 
 # Files
-tests/data/*
+tests/data/combined_data_3.txt

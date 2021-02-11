@@ -10,7 +10,7 @@ class transaction2matrix():
 		user_index = {user:index for user,index in zip(users, list(range(user_cnt)))}
 		item_index = {item:index for item,index in zip(items, list(range(item_cnt)))}
 
-		ratings_matrix = np.empty((user_cnt, item_cnt), dtype=np.float32)
+		ratings_matrix = np.zeros((user_cnt, item_cnt), dtype=np.float32)
 
 		#Add transactions to ratings array
 		for transaction in transaction_list:

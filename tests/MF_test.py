@@ -34,13 +34,37 @@ def openNetflixData(path, max_rows = 10000):
 
 if __name__ == "__main__":
 	#Load data
-	transactions = openNetflixData("tests/data/combined_data_3.txt", max_rows = 2000)
+	transactions = openNetflixData("tests/data/combined_data_3_small.txt", max_rows = 3000)
 	print("Data loaded")
+
+	#Get lists of users, items
+	users = set()
+	items = set()
+
+	for t in transactions:
+		users.add(t["user"])
+		items.add(t["item"])
+
+	users, items = list(users), list(items)
 	
-	R = transaction2matrix(transactions) #TODO get users, items
- 
-	mf = MF()
-	mf.fit()
+	#Make ratings sparse matrix
+	R = transaction2matrix(transactions, users, items).matrix 
+	print("Matrix created")
+
+	#fit MF model
+	mf = MF(latent_features = 3, 
+			alpha = 0.0008, 
+			beta = 0.03,
+			bias=True)
+
+	mf.fit(R, 
+			iter = 600, 
+			error_threshold=0.05)
+
+	print(mf._error())
+	#print the first few results
+	for R, Re in zip(mf.R[:20], mf.R_est[:20]):
+		print(R, Re)
 
 # if __name__ == "__main__":
 # 	url = "http://0.0.0.0:5000"

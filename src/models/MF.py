@@ -23,7 +23,7 @@ class MF():
 		self.user_bias = None
 		self.item_bias = None
 		
-	def fit(self, R, iter = 10000, error_threshold = 0.005):
+	def fit(self, R, iter = 1000, error_threshold = 0.05):
 		self.R = R
 		self.users, self.items = R.shape
 		self.H = np.random.rand(self.users, self.latent_features)
@@ -34,6 +34,8 @@ class MF():
 			self.item_bias = np.random.rand(1, self.items)
 
 		for i in range(iter):
+			if i % (int(iter / 25)) == 0:
+				print("Iteration {0}...".format(i))
 			# get Error:
 			R_est = self._R_est()
 			error = np.subtract(self.R, R_est)
