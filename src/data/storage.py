@@ -22,9 +22,9 @@ class reccomendationDB:
 
 	'''
 	def __init__(self):
-		self.transactions = TinyDB('transactions.json')
-		self.users = TinyDB('users.json')
-		self.items = TinyDB('items.json')
+		self.transactions = TinyDB('src/data/data/transactions.json')
+		self.users = TinyDB('src/data/data/users.json')
+		self.items = TinyDB('src/data/data/items.json')
 
 		#cache users and items to increase speed to check existance of a user, item
 		self.user_cache = set()
