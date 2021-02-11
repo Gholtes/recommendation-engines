@@ -68,6 +68,7 @@ def train(request: TrainRequest, response: Response):
 	#create and train model
 	mf = MF()
 	mf.fit(ratings_matrix, iter = request.epochs)
+	print(mf.R_est)
 	return {"predictions":str(mf.R_est), "input": str(mf.R)}
 
 

@@ -1,4 +1,12 @@
 import requests
+import os,sys,inspect
+#Hacky 
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from src.models.MF import MF
+from src.data.pipeline import transaction2matrix
 
 def openNetflixData(path, max_rows = 10000):
 	with open(path, "r") as f:
@@ -23,21 +31,32 @@ def openNetflixData(path, max_rows = 10000):
 	
 	return transactions
 
+
 if __name__ == "__main__":
-	url = "http://0.0.0.0:5000"
-	requests.get(url+"/purge") #Purge past data
-	
 	#Load data
-	transactions = openNetflixData("tests/data/combined_data_3.txt", max_rows = 100)
+	transactions = openNetflixData("tests/data/combined_data_3.txt", max_rows = 2000)
 	print("Data loaded")
+	
+	R = transaction2matrix(transactions) #TODO get users, items
+ 
+	mf = MF()
+	mf.fit()
 
-	#Add data to API in batches
-	for i in range(0,len(transactions),50):
-		print("Adding transactions: {0} to {1}".format(i,i+50)
-		batch = transactions[i:i+50]
-		requests.post(url+"/add", json = batch)
+# if __name__ == "__main__":
+# 	url = "http://0.0.0.0:5000"
+# 	requests.get(url+"/purge") #Purge past data
+	
+# 	#Load data
+# 	transactions = openNetflixData("tests/data/combined_data_3.txt", max_rows = 2000)
+# 	print("Data loaded")
 
-	#Train the model
-	preds = requests.post(url+"/train", json = {"epochs":10000})
-	print(preds)
+# 	#Add data to API in batches
+# 	for i in range(0,len(transactions),50):
+# 		print("Adding transactions: {0} to {1}".format(i,i+50))
+# 		batch = transactions[i:i+50]
+# 		requests.post(url+"/add", json = batch)
+
+# 	#Train the model
+# 	preds = requests.post(url+"/train", json = {"epochs":100})
+# 	print(preds.text)
 	
