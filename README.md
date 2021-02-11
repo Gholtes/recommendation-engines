@@ -15,13 +15,13 @@ $ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
 #### Add Transaction Data
 Pass in transactions to the ```\add``` endpoint to add these to the database. This will automatically populate user and item data tables.
 
-**Arguments:**
+**Request:**
 - **user**: unique user id, [str]
 - **item**: unique item id, [str]
-- **rating**: The user assigned ordinal rating [int]. Cannot be zero.
+- **rating**: The user assigned ordinal rating, [int]. Cannot be zero.
 
-**Returns:**
-- **status**: Success of addition
+**Response:**
+- **status**: 'success' if no errors, else 'error' as well as error infomation
 
 ```
 curl --location --request POST 'http://0.0.0.0:5000/add' \
@@ -30,6 +30,13 @@ curl --location --request POST 'http://0.0.0.0:5000/add' \
 ```
 #### Fit the model
 Call the ```/train``` endpoint to fit the model, passing in hyperparameters
+
+**Request:**
+- **epochs**: number of iterations, [int]. Default = 1000
+
+
+**Response:**
+- **status**: 'success' if no errors, else 'error' as well as error infomation
 
 ```
 curl --location --request POST 'http://0.0.0.0:5000/train' \

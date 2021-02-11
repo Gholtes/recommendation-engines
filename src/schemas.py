@@ -13,6 +13,6 @@ TransactionsListRequest = List[TransactionRequest]
 
 class TrainRequest(BaseModel):
 	'''Defines a train request'''
-	epochs: Optional[int] = 10000
+	epochs: Optional[int] = 1000
 
 #Define Response Schemas

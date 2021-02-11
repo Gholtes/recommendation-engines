@@ -56,20 +56,30 @@ async def health():
 @app.post('/add/', status_code=200)
 def add(request: TransactionsListRequest, response: Response):
 	'''Add a set of user transactions into the database'''
-	for transaction in request:
-		db.add_transaction({"user": transaction.user, "item": transaction.item, "rating":transaction.rating})
-	return {"status":"success"}
+	try:
+		for transaction in request:
+			db.add_transaction({"user": transaction.user, "item": transaction.item, "rating":transaction.rating})
+		return {"status":"success"}
+	
+	except Exception as e:
+        response.status_code = general_app_error_code
+        return {"status":"error", "error": str(e), "traceback": str(traceback.format_exc())}
 
 @app.post('/train/', status_code=200)
 def train(request: TrainRequest, response: Response):
 	'''Train / fit the model'''
-	#transform data
-	ratings_matrix = transaction2matrix(db.get_transactions(), db.get_users(), db.get_items()).matrix
-	#create and train model
-	mf = MF()
-	mf.fit(ratings_matrix, iter = request.epochs)
-	print(mf.R_est)
-	return {"predictions":str(mf.R_est), "input": str(mf.R)}
+	try:
+		#transform data
+		ratings_matrix = transaction2matrix(db.get_transactions(), db.get_users(), db.get_items()).matrix
+		#create and train model
+		mf = MF()
+		mf.fit(ratings_matrix, iter = request.epochs)
+		print(mf.R_est)
+		return {"status":"success"}
+	
+	except Exception as e:
+        response.status_code = general_app_error_code
+        return {"status":"error", "error": str(e), "traceback": str(traceback.format_exc())}
 
 
 
