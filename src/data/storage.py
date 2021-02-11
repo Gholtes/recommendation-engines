@@ -31,21 +31,15 @@ class reccomendationDB:
 		self.item_cache = set()
 
 		self.update_cache()
-
-	def get_users(self):
-		return [i["id"] for i in self.users.all()]
-
-	def get_users(self):
-		return [i["id"] for i in self.items.all()]
 	
 	def add_transaction(self, transaction):
 		self.transactions.insert(transaction)
 
 		#update user and item stores if needed
-		if not is_user(transaction["user"]):
+		if not self.is_user(transaction["user"]):
 			self.users.insert({"id": transaction["user"]})
 
-		if not is_item(transaction["item"]):
+		if not self.is_item(transaction["item"]):
 			self.items.insert({"id": transaction["item"]})
 		
 		return transaction
@@ -61,8 +55,16 @@ class reccomendationDB:
 			self.user_cache.add(item)
 		pass
 
+	def get_users(self):
+		return [i["id"] for i in self.users.all()]
+
+	def get_users(self):
+		return [i["id"] for i in self.items.all()]
+	
 	def is_user(self, user):
 		return user in self.user_cache
 
 	def is_item(self, item):
 		return item in self.item_cache
+
+	
