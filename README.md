@@ -3,6 +3,8 @@ A collection of Recommendation Engines and a simple API for deployment
 
 Feb 2021
 
+Written in Python using ```FastAPI```, ```Numpy```, ```Tensorflow```.
+
 ## Usage
 
 Run the API with uvicorn:
