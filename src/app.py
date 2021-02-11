@@ -33,6 +33,7 @@ from src.models.MF import MF
 
 #import data items
 from src.data.storage import reccomendationDB
+from src.data.pipeline import transaction2matrix
 
 #Config HTTP error codes
 bad_input_code = 400
@@ -53,13 +54,33 @@ async def health():
 
 #Core end-points
 @app.post('/add/', status_code=200)
-def add(request: TransactionsList, response: Response):
+def add(request: TransactionsListRequest, response: Response):
 	'''Add a set of user transactions into the database'''
 	print(request)
 	for transaction in request:
 		print(transaction)
 		db.add_transaction({"user": transaction.user, "item": transaction.item, "rating":transaction.rating})
 	return {"status":"success"}
+
+@app.post('/train/', status_code=200)
+def train(request: TrainRequest, response: Response):
+	'''Train / fit the model'''
+	#transform data
+	ratings_matrix = transaction2matrix(db.get_transactions(), db.get_users(), db.get_items()).matrix
+	#create and train model
+	mf = MF()
+	mf.fit(ratings_matrix, iter = request.epochs)
+	return {"predictions":str(mf.R_est), "input": str(mf.R)}
+
+
+
+#Admin end-points
+@app.get('/contents/', status_code=200)
+def contents(response: Response):
+	'''Add a set of user transactions into the database'''
+	items = db.get_items()
+	users = db.get_users()
+	return {"users":users, "items":items}
 
 
     
@@ -68,7 +89,7 @@ Example requests
 
 curl --location --request POST 'http://0.0.0.0:5000/add' --header 'Content-Type: application/json' --data-raw '[{"user": 1, "item": 1, "rating": 1}]'
 
-curl --location --request POST 'http://0.0.0.0:5000/add' --header 'Content-Type: application/json' --data-raw '[{"user": 1, "item": 1, "rating": 1}, {"user": 1, "item": 2, "rating": 4}, {"user": 1, "item": 3, "rating": 5}, {"user": 2, "item": 2, "rating": 5}, {"user": 2, "item": 3, "rating": 5}, {"user": 2, "item": 4, "rating": 1}, {"user": 3, "item": 1, "rating": 4}, {"user": 3, "item": 2, "rating": 2}, {"user": 3, "item": 3, "rating": 1}]'
-			
+
+curl --location --request POST 'http://0.0.0.0:5000/train' --header 'Content-Type: application/json' --data-raw '{}'
 
 '''

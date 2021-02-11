@@ -3,12 +3,16 @@ from pydantic import BaseModel
 
 #Define Request Schemas
 
-class Transaction(BaseModel):
+class TransactionRequest(BaseModel):
 	'''Defines a transaction datapoint'''
 	user: str
 	item: str
 	rating: Optional[int] = 0
 	
-TransactionsList = List[Transaction]
+TransactionsListRequest = List[TransactionRequest]
+
+class TrainRequest(BaseModel):
+	'''Defines a train request'''
+	epochs: Optional[int] = 10000
 
 #Define Response Schemas

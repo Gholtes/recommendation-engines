@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query
+import os
 
 class reccomendationDB:
 	'''
@@ -25,14 +26,9 @@ class reccomendationDB:
 		self.transactions = TinyDB('src/data/data/transactions.json')
 		self.users = TinyDB('src/data/data/users.json')
 		self.items = TinyDB('src/data/data/items.json')
-
-		#cache users and items to increase speed to check existance of a user, item
-		self.user_cache = set()
-		self.item_cache = set()
-
-		self.update_cache()
 	
 	def add_transaction(self, transaction):
+		'''adds a transaction to the tables'''
 		self.transactions.insert(transaction)
 
 		#update user and item stores if needed
@@ -41,30 +37,28 @@ class reccomendationDB:
 
 		if not self.is_item(transaction["item"]):
 			self.items.insert({"id": transaction["item"]})
-		
-		return transaction
 
-	def update_cache(self):
-		#dump DBs
-		users = [i["id"] for i in self.users.all()]
-		items = [i["id"] for i in self.items.all()]
-		#Add to cache 
-		for user in users:
-			self.user_cache.add(user)
-		for item in items:
-			self.user_cache.add(item)
-		pass
+		return transaction
+	
+	def get_transactions(self):
+		'''dumps all transactions'''
+		return self.transactions.all()
 
 	def get_users(self):
 		return [i["id"] for i in self.users.all()]
 
-	def get_users(self):
+	def get_items(self):
 		return [i["id"] for i in self.items.all()]
 	
 	def is_user(self, user):
-		return user in self.user_cache
+		return user in self.get_users()
 
 	def is_item(self, item):
-		return item in self.item_cache
+		return item in self.get_items()
+
+	def _purgeDB(self):
+		os.remove('src/data/data/transactions.json')
+		os.remove('src/data/data/users.json')
+		os.remove('src/data/data/items.json')
 
 	
