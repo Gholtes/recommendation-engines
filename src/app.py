@@ -9,7 +9,7 @@ Description: Defines the application that will provide the API for the reccomend
 Endpoints:
 #TODO
 
-Run with $ uvicorn src.app:app --reload
+Run with $ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
 --------------------------------------------------
 Edit History:
 
@@ -31,13 +31,17 @@ from src.schemas import *
 #Model imports
 from src.models.MF import MF
 
+#import data items
+from src.data.storage import reccomendationDB
+
 #Config HTTP error codes
 bad_input_code = 400
 out_of_order_code = 400
 general_app_error_code = 500
 
-#App definition
+#Initialise key services
 app = FastAPI()
+db = reccomendationDB()
 
 @app.get('/')
 async def home():
@@ -51,7 +55,28 @@ async def health():
 @app.post('/add/', status_code=200)
 def add(request: TransactionsList, response: Response):
 	'''Add a set of user transactions into the database'''
+	print(request)
 	for transaction in request:
-		pass
+		print(transaction)
+		db.add_transaction(transaction)
+	return {"status":"success"}
+
 
     
+'''
+curl --location --request POST 'http://0.0.0.0:5000/add' --header 'Content-Type: application/json' --data-raw '[{"user": 1, "item": 1, "rating": 1}]'
+
+curl --location --request POST 'http://0.0.0.0:5000/add' \
+--header 'Content-Type: application/json' \
+--data-raw '[{"user": 1, "item": 1, "rating": 1}, \
+			{"user": 1, "item": 2, "rating": 4}, \
+			{"user": 1, "item": 3, "rating": 5}, \
+			{"user": 2, "item": 2, "rating": 5}, \
+			{"user": 2, "item": 3, "rating": 5}, \
+			{"user": 2, "item": 4, "rating": 1}, \
+			{"user": 3, "item": 1, "rating": 4}, \
+			{"user": 3, "item": 2, "rating": 2}, \
+			{"user": 3, "item": 3, "rating": 1}]'
+			
+
+'''
