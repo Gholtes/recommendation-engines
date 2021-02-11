@@ -1,2 +1,3 @@
-# rerecommendation-engines
-A collection of recommendation engines and API
+# recommendation-engines
+A collection of Recommendation engines and API
+
