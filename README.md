@@ -12,7 +12,25 @@ Run the API with uvicorn:
 $ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
 ```
 
-or experiemnt with the induvidual models in /tests.
+#### Add Transaction Data
+Pass in transactions to the ```\add``` endpoint to add these to the database. This will automatically populate user and item data tables.
+
+```
+curl --location --request POST 'http://0.0.0.0:5000/add' \
+ --header 'Content-Type: application/json' \
+ --data-raw '[{"user": 1, "item": 1, "rating": 1}]'
+```
+#### Fit the model
+Call the ```/train``` endpoint to fit the model, passing in hyperparameters
+
+```
+curl --location --request POST 'http://0.0.0.0:5000/train' \
+--header 'Content-Type: application/json' \
+--data-raw '{"epochs":700}'
+```
+
+
+or experiement with the induvidual models in /tests.
 
 ## Install
 
