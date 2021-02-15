@@ -140,10 +140,10 @@ def admin():
 	html_content = """
 	<html>
 		<head>
-			<title>recommendation Engine Admin</title>
+			<title>Recommendation Engine Admin</title>
 		</head>
 		<body>
-			<h1>recommendation Engine Admin</h1>
+			<h1>Recommendation Engine Admin</h1>
 			<h2>Info:</h2>
 			<form action="/keys">
     			<input type="submit" value="Items and Users" />

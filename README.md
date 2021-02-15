@@ -1,5 +1,5 @@
 # Recommendation Engines
-A collection of recommendation Engines and a simple API for deployment
+A collection of Recommendation Engines and a simple API for deployment
 
 Feb 2021
 
