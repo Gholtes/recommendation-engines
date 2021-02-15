@@ -7,10 +7,22 @@ Written in Python using ```FastAPI```, ```Numpy```, ```Tensorflow```.
 
 ## Usage
 
+#### With Docker
+```
+$ export DOCKER_BUILDKIT=0
+$ docker image build -t reccomendation-engine-app .
+$ docker run -p 5000:5000 --name re-app -d reccomendation-engine-app
+```
+
+The app will be live on http://localhost:5000
+
+#### Non-containerised
 Run the API with uvicorn:
 ```
 $ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
 ```
+
+
 
 #### Add Transaction Data
 Pass in transactions to the ```\add``` endpoint to add these to the database. This will automatically populate user and item data tables.
