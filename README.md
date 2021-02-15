@@ -29,7 +29,7 @@ The /admin page has a number of useful functions to interact with the API and vi
 ## API End Points
 
 #### Add Transaction Data
-Pass in transactions to the ```\add``` endpoint to add these to the database. This will automatically populate user and item data tables.
+Pass in transactions to the ```/add``` endpoint to add these to the database. This will automatically populate user and item data tables.
 
 **Request:**
 - **user**: unique user id, [str]
@@ -60,15 +60,15 @@ curl --location --request POST 'http://0.0.0.0:5000/train' \
 --data-raw '{"epochs":700}'
 ```
 
-
 or experiement with the induvidual models in /tests.
 
 ## Install
 
+If not using docker, install the required packages:
 ```
-pip3 install requirments.txt
+pip3 install requirements.txt
 ```
 
 ## Experimentation
 
-There are test files in ```/tests``` which are simple examples of how to preprocess and pass data into the models, as well as a sample dataset.
+There are test files in ```tests``` which are simple examples of how to preprocess and pass data into the models, as well as a sample dataset.
