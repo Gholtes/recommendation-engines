@@ -68,7 +68,7 @@ Call the ```/reccomend-user``` endpoint to get item reccomendations for a user
 
 **Response:**
 - **user**: The user ID, [str]
-- **count**: A dictionary of recomendations in the format ```{"item id":predicted_rating}```
+- **recommendations**: A dictionary of recomendations in the format ```{"item id":predicted_rating}```
 
 ```
 curl --location --request POST 'http://0.0.0.0:5000/train' \
