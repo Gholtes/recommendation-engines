@@ -4,7 +4,7 @@ File: app.py
 --------------------------------------------------
 Author: Deloitte Australia 2021
 
-Description: Defines the application that will provide the API for the reccomendation engines
+Description: Defines the application that will provide the API for the recommendation engines
 
 Endpoints:
 #TODO
@@ -13,8 +13,8 @@ Run with
 	$ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
 Or build and run with
 	$ export DOCKER_BUILDKIT=0
-	$ docker image build -t reccomendation-engine-app .
-	$ docker run -p 5000:5000 --name re-app -d reccomendation-engine-app
+	$ docker image build -t recommendation-engine-app .
+	$ docker run -p 5000:5000 --name re-app -d recommendation-engine-app
 --------------------------------------------------
 Edit History:
 
@@ -39,7 +39,7 @@ from src.schemas import *
 from src.models.MF import MF
 
 #import data items
-from src.data.storage import reccomendationDB
+from src.data.storage import recommendationDB
 from src.data.pipeline import transaction2matrix
 
 #Config HTTP error codes
@@ -49,7 +49,7 @@ general_app_error_code = 500
 
 #Initialise key services
 app = FastAPI()
-db = reccomendationDB()
+db = recommendationDB()
 
 #On Startup
 if db.get_users:  #if there is data, train the model
@@ -63,7 +63,7 @@ if db.get_users:  #if there is data, train the model
 
 @app.get('/')
 async def home():
-	return {"app":"Reccomendation Engine API"}
+	return {"app":"recommendation Engine API"}
 
 @app.get('/health/', status_code = 204)
 async def health():
@@ -103,9 +103,9 @@ def train(request: TrainRequest, response: Response):
 		response.status_code = general_app_error_code
 		return {"status":"error", "error": str(e), "traceback": str(traceback.format_exc())}
 
-@app.post('/reccomend-user/', status_code=200)
-def reccomend_user(request: UserReccomendationRequest, response: Response):
-	'''get reccomended items'''
+@app.post('/recommend-user/', status_code=200)
+def recommend_user(request: UserRecommendationRequest, response: Response):
+	'''get recommended items'''
 	try:
 		user_to_index, item_to_index = MF_matrix.user_index, MF_matrix.item_index
 		user = request.user
@@ -114,19 +114,19 @@ def reccomend_user(request: UserReccomendationRequest, response: Response):
 			return {"status":"error", "error": "user not in database"}
 		
 		#Get reccomenations from mf model and
-		#Extract user's reccomendations
+		#Extract user's recommendations
 		predicted_item_ratings = mf.R_est[user_to_index[user], :]
 		existing_item_ratigs = mf.R[user_to_index[user], :]
 
-		reccomendations = {}
+		recommendations = {}
 		cnt = 1
-		#Rank reccomendations, and reccomend the top items that the user hasnt rated yet. only return a max of request.count items
+		#Rank recommendations, and recommend the top items that the user hasnt rated yet. only return a max of request.count items
 		for item_est, item_actual, index in sorted(zip(predicted_item_ratings, existing_item_ratigs, list(range(len(predicted_item_ratings)))), reverse=True):
 			if item_actual == 0 and cnt <= request.count: #New product to user
-				reccomendations[index] = item_est
+				recommendations[index] = item_est
 				cnt +=1
 		
-		return {"user":request.user, "reccomendations":reccomendations}
+		return {"user":request.user, "recommendations":recommendations}
 
 
 	except Exception as e:
@@ -140,10 +140,10 @@ def admin():
 	html_content = """
 	<html>
 		<head>
-			<title>Reccomendation Engine Admin</title>
+			<title>recommendation Engine Admin</title>
 		</head>
 		<body>
-			<h1>Reccomendation Engine Admin</h1>
+			<h1>recommendation Engine Admin</h1>
 			<h2>Info:</h2>
 			<form action="/keys">
     			<input type="submit" value="Items and Users" />
@@ -174,7 +174,7 @@ def admin():
 				<input type="submit" value="Add">
 			</form>
 
-			<h2>Get Reccomendation:</h2>
+			<h2>Get recommendation:</h2>
 			<form action="/recc-admin/" method="post">
 				<label for="user">User:</label><br>
 				<input type="text" id="user" name="user"><br>
@@ -254,10 +254,10 @@ def add_admin(user: str = Form(...), item: str = Form(...), rating: str = Form(.
 
 @app.post('/recc-admin', status_code=200)
 def recc_admin(user: str = Form(...)):
-	request = UserReccomendationRequest
+	request = UserRecommendationRequest
 	request.user = user
 	request.count = 100
-	return reccomend_user(request, response = Response)
+	return recommend_user(request, response = Response)
 
 @app.get('/train-admin/', status_code=200)
 def train_admin(response: Response):
@@ -275,6 +275,6 @@ curl --location --request POST 'http://0.0.0.0:5000/add' --header 'Content-Type:
 
 curl --location --request POST 'http://0.0.0.0:5000/train' --header 'Content-Type: application/json' --data-raw '{}'
 
-curl --location --request POST 'http://0.0.0.0:5000/reccomend-user' --header 'Content-Type: application/json' --data-raw '{"user":1}'
+curl --location --request POST 'http://0.0.0.0:5000/recommend-user' --header 'Content-Type: application/json' --data-raw '{"user":1}'
 
 '''

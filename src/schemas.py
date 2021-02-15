@@ -15,7 +15,7 @@ class TrainRequest(BaseModel):
 	'''Defines a train request'''
 	epochs: Optional[int] = 1000
 
-class UserReccomendationRequest(BaseModel):
+class UserRecommendationRequest(BaseModel):
 	user: str
 	count: Optional[int] = 100
 

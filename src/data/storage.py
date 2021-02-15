@@ -1,7 +1,7 @@
 from tinydb import TinyDB, Query
 import os
 
-class reccomendationDB:
+class recommendationDB:
 	'''
 	Data model to store reccomendation data. 
 	Three key componants:

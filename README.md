@@ -1,5 +1,5 @@
 # Recommendation Engines
-A collection of Recommendation Engines and a simple API for deployment
+A collection of recommendation Engines and a simple API for deployment
 
 Feb 2021
 
@@ -56,10 +56,10 @@ Call the ```/train``` endpoint to fit the model, passing in hyperparameters
 ```
 curl --location --request POST 'http://0.0.0.0:5000/train' \
 --header 'Content-Type: application/json' \
---data-raw '{"epochs":700}'
+--data-raw '{"epochs":700}'UserrecommendationRequest
 ```
 
-### Get reccomendations
+### Get recomendations
 Call the ```/reccomend-user``` endpoint to get item reccomendations for a user
 
 **Request:**
