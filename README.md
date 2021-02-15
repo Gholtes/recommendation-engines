@@ -28,7 +28,7 @@ The /admin page has a number of useful functions to interact with the API and vi
 
 ## API End Points
 
-#### Add Transaction Data
+### Add Transaction Data
 Pass in transactions to the ```/add``` endpoint to add these to the database. This will automatically populate user and item data tables.
 
 **Request:**
@@ -44,12 +44,11 @@ curl --location --request POST 'http://0.0.0.0:5000/add' \
  --header 'Content-Type: application/json' \
  --data-raw '[{"user": "1", "item": "1", "rating": 1}, {"user": "2", "item": "4", "rating": 5}]'
 ```
-#### Fit the model
+### Fit the model
 Call the ```/train``` endpoint to fit the model, passing in hyperparameters
 
 **Request:**
 - **epochs**: number of iterations, [int]. Default = 1000
-
 
 **Response:**
 - **status**: 'success' if no errors, else 'error' as well as error infomation
@@ -60,7 +59,24 @@ curl --location --request POST 'http://0.0.0.0:5000/train' \
 --data-raw '{"epochs":700}'
 ```
 
-or experiement with the induvidual models in /tests.
+### Get reccomendations
+Call the ```/reccomend-user``` endpoint to get item reccomendations for a user
+
+**Request:**
+- **user**: The user ID, [str]
+- **count**: Number of reccomendations to return, [int]. Default = 100
+
+**Response:**
+- **user**: The user ID, [str]
+- **reccomendations**: A dictionary of reccomendations in the format ```{"item id":predicted_rating}```
+
+```
+curl --location --request POST 'http://0.0.0.0:5000/train' \
+--header 'Content-Type: application/json' \
+--data-raw '{"epochs":700}'
+```
+
+or experiement with the induvidual models in ```tests```.
 
 ## Install
 
