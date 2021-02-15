@@ -129,7 +129,7 @@ def reccomend_user(request: UserReccomendationRequest, response: Response):
 		return {"status":"error", "error": str(e), "traceback": str(traceback.format_exc())}
 
 
-#Admin end-points
+#Quick and dirty admin end-points
 @app.get('/admin/', status_code=200)
 def admin():
 	html_content = """
@@ -154,24 +154,37 @@ def admin():
 			<form action="/load">
     			<input type="submit" value="Load dummy data" />
 			</form>
-			<form action="/pruge">
+			<form action="/purge">
     			<input type="submit" value="CLEAR DATABASE" />
 			</form>
 
 			<h2>Add Data:</h2>
-			<form action="/add-admin>
-			<label for="user">User:</label><br>
-			<input type="text" id="user" name="user"><br>
-			<label for="item">Item:</label><br>
-			<input type="text" id="item" name="item"><br>
-			<label for="rating">Rating:</label><br>
-			<input type="text" id="rating" name="rating"><br>
-			<input type="submit" value="Add">
+			<form action="/add-admin/" method="post">
+				<label for="user">User:</label><br>
+				<input type="text" id="user" name="user"><br>
+				<label for="item">Item:</label><br>
+				<input type="text" id="item" name="item"><br>
+				<label for="rating">Rating:</label><br>
+				<input type="text" id="rating" name="rating"><br>
+				<input type="submit" value="Add">
+			</form>
+
+			<h2>Get Reccomendation:</h2>
+			<form action="/recc-admin/" method="post">
+				<label for="user">User:</label><br>
+				<input type="text" id="user" name="user"><br>
+				<input type="submit" value="Get">
 			</form>
 		</body>
 	</html>
 	"""
 	return HTMLResponse(content=html_content, status_code=200)
+
+@app.get('/purge/', status_code=200)
+def purge():
+	'''Remove DB contents'''
+	db._purgeDB()
+	return {"status": "successful"}
 
 @app.get('/keys/', status_code=200)
 def keys():
@@ -205,12 +218,6 @@ def mf_render():
 	"""
 	return HTMLResponse(content=html_content, status_code=200)
 
-@app.get('/purge/', status_code=200)
-def purge():
-	'''Remove DB contents'''
-	db._purgeDB()
-	return {"status": "successful"}
-
 def HTML_table(array):
 	html = ["""<table style="width:100%">"""]
 	for row in array:
@@ -234,32 +241,26 @@ def load_dummy_data():
 			i += 1
 	return resp
 
-@app.get('/add-admin/', status_code=200)
-def add_admin(username: str = Form(...), password: str = Form(...)):
-	print(request)
-	db.add_transaction({"user": transaction.user, "item": transaction.item, "rating":transaction.rating})
+@app.post('/add-admin', status_code=200)
+def add_admin(user: str = Form(...), item: str = Form(...), rating: str = Form(...)):
+	print("Adding: user {0}, item {1}, rating {2}".format(user, item, rating))
+	db.add_transaction({"user": user, "item": item, "rating": rating})
 	return {"status":"success"}
+
+@app.post('/recc-admin', status_code=200)
+def recc_admin(user: str = Form(...)):
+	request = UserReccomendationRequest
+	request.user = user
+	request.count = 100
+	return reccomend_user(request, response = Response)
 
 @app.get('/train-admin/', status_code=200)
 def train_admin(response: Response):
 	'''Train / fit the model without input '''
-	try:
-		global MF_matrix
-		global mf
+	request = TrainRequest
+	request.epochs = 500
+	return train(request, response = Response)
 		
-		#transform data
-		MF_matrix = transaction2matrix(db.get_transactions(), db.get_users(), db.get_items())
-		ratings_matrix = MF_matrix.matrix
-		
-		#create and train model
-		mf = MF()
-		mf.fit(ratings_matrix, iter = 500)
-		
-		return {"status":"success"}
-	
-	except Exception as e:
-		response.status_code = general_app_error_code
-		return {"status":"error", "error": str(e), "traceback": str(traceback.format_exc())}
 	
 '''
 Example requests
