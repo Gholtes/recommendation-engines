@@ -94,7 +94,7 @@ def train(request: TrainRequest, response: Response):
 		ratings_matrix = MF_matrix.matrix
 		
 		#create and train model
-		mf = MF()
+		mf = MF(bias = request.bias)
 		mf.fit(ratings_matrix, iter = request.epochs)
 		
 		return {"status":"success"}
@@ -264,6 +264,7 @@ def train_admin(response: Response):
 	'''Train / fit the model without input '''
 	request = TrainRequest
 	request.epochs = 2000
+	request.bias = False
 	return train(request, response = Response)
 		
 	

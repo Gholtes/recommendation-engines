@@ -14,6 +14,7 @@ TransactionsListRequest = List[TransactionRequest]
 class TrainRequest(BaseModel):
 	'''Defines a train request'''
 	epochs: Optional[int] = 1000
+	bias: Optional[bool] = False
 
 class UserRecommendationRequest(BaseModel):
 	user: str
