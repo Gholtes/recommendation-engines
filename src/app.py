@@ -63,7 +63,7 @@ if db.get_users:  #if there is data, train the model
 
 @app.get('/')
 async def home():
-	return {"app":"Reccomendation Engine API", "Created by": "Deloitte Australia"}
+	return {"app":"Reccomendation Engine API"}
 
 @app.get('/health/', status_code = 204)
 async def health():
