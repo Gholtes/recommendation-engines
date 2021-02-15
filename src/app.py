@@ -9,7 +9,12 @@ Description: Defines the application that will provide the API for the reccomend
 Endpoints:
 #TODO
 
-Run with $ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
+Run with 
+	$ uvicorn src.app:app --reload --host 0.0.0.0 --port 5000
+Or build and run with
+	$ export DOCKER_BUILDKIT=0
+	$ docker image build -t reccomendation-engine-app .
+	$ docker run -p 5000:5000 --name re-app -d reccomendation-engine-app
 --------------------------------------------------
 Edit History:
 
@@ -231,7 +236,7 @@ def HTML_table(array):
 
 @app.get('/load/', status_code=200)
 def load_dummy_data():
-	with open("/Users/grantholtes/Development/ML/reccomendationEngines/tests/data/tiny.csv", "r") as f:
+	with open("src/data/data/tiny.csv", "r") as f:
 		reader = csv.reader(f)
 		resp = {}
 		i = 0
@@ -258,7 +263,7 @@ def recc_admin(user: str = Form(...)):
 def train_admin(response: Response):
 	'''Train / fit the model without input '''
 	request = TrainRequest
-	request.epochs = 500
+	request.epochs = 2000
 	return train(request, response = Response)
 		
 	
